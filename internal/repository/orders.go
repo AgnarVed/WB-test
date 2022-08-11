@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"wbTest/internal/models"
 )
 
@@ -29,9 +31,29 @@ func (od *order) GetOrderByID(ctx context.Context, tx *sql.Tx, orderID int) (*mo
 	return &order, nil
 }
 
+//func (od *order) CreateOrder(ctx context.Context, tx *sql.Tx, insert *models.Order) error {
+//	query := `INSERT INTO orders VALUES ($1,$2,$3)`
+//	_, err := tx.ExecContext(ctx, query, insert.ID, insert.OrderUID, insert.Data)
+//	if err != nil {
+//		return err
+//	}
+//
+//	return nil
+//}
+
+type Msg struct {
+	Message string `json:"msg"`
+}
+
 func (od *order) CreateOrder(ctx context.Context, tx *sql.Tx, insert *models.Order) error {
 	query := `INSERT INTO orders VALUES ($1,$2,$3)`
-	_, err := tx.ExecContext(ctx, query, insert.ID, insert.OrderUID, insert.Data)
+	var msg Msg
+	err := json.Unmarshal(insert.Data, &msg)
+	if err != nil {
+		logrus.Fatal("Cannot Unmarshal Data", err)
+	}
+	dataJson, err := json.Marshal(msg)
+	_, err = tx.ExecContext(ctx, query, insert.ID, insert.OrderUID, dataJson)
 	if err != nil {
 		return err
 	}

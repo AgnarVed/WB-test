@@ -2,7 +2,9 @@ package http
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
 	"strconv"
@@ -27,9 +29,35 @@ func (h *Handler) getOrderByID(ctx *fiber.Ctx) error {
 
 }
 
+type Msg struct {
+	Message string `json:"msg"`
+}
+
+// to fix json error while importing to psql
+func (h *Handler) showData(ctx *fiber.Ctx) error {
+	var data models.Order
+	err := ctx.BodyParser(&data)
+	if err != nil {
+		h.Response(ctx, http.StatusBadRequest, nil, err)
+	}
+	var dataJson Msg
+	err = json.Unmarshal(data.Data, &dataJson)
+	if err != nil {
+		h.Response(ctx, http.StatusBadRequest, nil, err)
+	}
+
+	//newData, err := json.Marshal(&dataJson)
+	//if err != nil {
+	//	return h.Response(ctx, http.StatusBadRequest, nil, err)
+	//}
+
+	fmt.Printf("data json is: %s", dataJson.Message)
+	return nil
+}
+
 func (h *Handler) createOrder(ctx *fiber.Ctx) error {
 	var order models.Order
-	err := ctx.BodyParser(order)
+	err := ctx.BodyParser(&order)
 	if err != nil {
 		h.Response(ctx, http.StatusBadRequest, nil, err)
 	}
