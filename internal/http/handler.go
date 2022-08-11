@@ -30,6 +30,7 @@ func (h *Handler) Init(app *fiber.App) {
 
 	app.Get("/ping", h.serviceHealth)
 	app.Get("/:orderID", h.getOrderByID)
+	app.Post("/order/create", h.createOrder)
 	//v1 := app.Group("/")
 	//
 	//h.initRoutesItem(v1)

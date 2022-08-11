@@ -31,6 +31,25 @@ func (od order) GetOrderByID(ctx context.Context, orderID int) (*models.Order, e
 	return order, nil
 }
 
+func (od *order) CreateOrder(ctx context.Context, insert *models.Order) error {
+	tx, err := od.BeginTransaction(ctx)
+	if err != nil {
+		return err
+	}
+
+	err = od.orderDB.CreateOrder(ctx, tx, insert)
+	if err != nil {
+		od.RollbackTransaction(ctx, tx)
+		return err
+	}
+	err = od.CommitTransaction(ctx, tx)
+	if err != nil {
+		od.RollbackTransaction(ctx, tx)
+		return err
+	}
+	return nil
+}
+
 func NewOrderService(repos *repository.Repositories, cfg *config.Config) Order {
 	return &order{
 		orderDB:  repos.OrderDB,

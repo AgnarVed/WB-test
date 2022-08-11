@@ -21,6 +21,7 @@ type CommonDB interface {
 
 type OrderDB interface {
 	GetOrderByID(ctx context.Context, tx *sql.Tx, orderD int) (*models.Order, error)
+	CreateOrder(ctx context.Context, tx *sql.Tx, insert *models.Order) error
 }
 
 func NewRepositories(psqlClient *client.PostgresClient) *Repositories {

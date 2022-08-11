@@ -9,10 +9,6 @@ import (
 type order struct {
 }
 
-func NewOrderDB() OrderDB {
-	return &order{}
-}
-
 func (od *order) GetOrderByID(ctx context.Context, tx *sql.Tx, orderID int) (*models.Order, error) {
 	query := `SELECT id, order_uid, data
 	FROM orders
@@ -31,4 +27,18 @@ func (od *order) GetOrderByID(ctx context.Context, tx *sql.Tx, orderID int) (*mo
 		return nil, err
 	}
 	return &order, nil
+}
+
+func (od *order) CreateOrder(ctx context.Context, tx *sql.Tx, insert *models.Order) error {
+	query := `INSERT INTO orders VALUES ($1,$2,$3)`
+	_, err := tx.ExecContext(ctx, query, insert.ID, insert.OrderUID, insert.Data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func NewOrderDB() OrderDB {
+	return &order{}
 }
