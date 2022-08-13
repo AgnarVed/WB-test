@@ -1,20 +1,17 @@
 package app
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	_ "github.com/jackc/pgx/v4"
 	_ "github.com/lib/pq"
-	stan "github.com/nats-io/stan.go"
 	"github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
-	"wbTest/internal/cache"
 	"wbTest/internal/config"
 	"wbTest/internal/http"
 	"wbTest/internal/repository"
@@ -24,6 +21,7 @@ import (
 )
 
 func Run() {
+	logger := logrus.New()
 	config, err := config.NewConfig()
 	if err != nil {
 		logrus.Fatal(err)
@@ -53,26 +51,30 @@ func Run() {
 
 	// init repository
 	repos := repository.NewRepositories(&pgClient)
+	// init cache
+	//cache, err := repository.NewCache(1024, repos.OrderDB, logger)
 
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(config.ShutdownTimeout)*time.Second)
+	defer cancel()
 	// init services
 	services := service.NewService(repos, config)
 
-	// init cache
-	//expTime, err := time.ParseDuration(config.CacheExpTime)
-	//if err != nil {
-	//	logrus.Fatal(err)
-	//}
-	//cleanupTime, err := time.ParseDuration(config.CacheCleanupInterval)
-	//if err != nil {
-	//	logrus.Fatal(err)
-	//}
-	//cache := cache.NewCache(expTime*time.Second, cleanupTime*time.Second)
-	cache := cache.NewCache(5*time.Minute, 20*time.Minute)
-
+	cache, err := services.Cache.NewCache(1024, repos.OrderDB, logger)
+	// uploading cache
+	ok, err := services.Cache.UploadCache(ctx)
+	if err != nil {
+		logrus.Fatal("Cannot upload cache ", err)
+	}
+	if ok {
+		logrus.Info("Cache uploaded successfully")
+	}
+	ok = cache.Set("123", nil)
+	if !ok {
+		logger.Fatal("cannot set into cache")
+	}
 	// init server, router, handlers
 	srv := server.NewServer(config)
 	http.NewHandlers(config, services).Init(srv.App())
-
 	// start server
 	go func() {
 		err := srv.Run()
@@ -81,46 +83,43 @@ func Run() {
 		}
 	}()
 
-	// nats streaming listen
-	go func() {
-		w := sync.WaitGroup{}
-		w.Add(1)
-		sc, err := stan.Connect(config.ClusterName, config.NatsClient, stan.NatsURL(config.NatsURL))
-		if err != nil {
-			logrus.Fatal(err)
-		}
-		defer sc.Close()
-		_, err = sc.Subscribe(config.NatsSubject, func(msg *stan.Msg) {
-			// TODO insert msg into cache
-			order, err := Unmarshaler(msg.Data)
-			if err != nil {
-				logrus.Fatal("\nUnable to unmarshal message")
-			}
-			ok := cache.Exist(order.OrderUID)
-			if ok != 0 {
-				val, _ := cache.Get(order.OrderUID)
-				fmt.Printf("\nOrder by id: %s is %s", order.OrderUID, val)
-			} else {
-				fmt.Printf("\nCannot find order in cache by ID: %s", order.OrderUID)
-				logrus.Info("Inserting into cache")
-				err = insertMsg(msg.Data, cache, 3)
-				if err != nil {
-					logrus.Fatal("Cannot Import Message")
-				}
-			}
-
-			//cache.StartGC()
-			//defer cache.Delete(string(indx))
-
-		}, stan.DeliverAllAvailable(), stan.DurableName(config.DurableName))
-
-		if err != nil {
-			logrus.Fatal("Can't subscribe to channel", err)
-		}
-
-		w.Wait()
-	}()
-	cache.StartGC()
+	//nats streaming listen
+	//go func() {
+	//	w := sync.WaitGroup{}
+	//	w.Add(1)
+	//	sc, err := stan.Connect(config.ClusterName, config.NatsClient, stan.NatsURL(config.NatsURL))
+	//	if err != nil {
+	//		logrus.Fatal(err)
+	//	}
+	//	defer sc.Close()
+	//	_, err = sc.Subscribe(config.NatsSubject, func(msg *stan.Msg) {
+	//		// TODO insert msg into cache
+	//		order, err := Unmarshaler(msg.Data)
+	//		if err != nil {
+	//			logrus.Fatal("\nUnable to unmarshal message")
+	//		}
+	//		orderCached, ok := cache.Peek(order.OrderUID)
+	//		if ok {
+	//			fmt.Printf("\nOrder by id: %s is %s", order.OrderUID, orderCached.Data)
+	//		} else {
+	//			fmt.Printf("\nCannot find order in cache by ID: %s", order.OrderUID)
+	//			logrus.Info("Inserting into cache")
+	//			ok := cache.Set(order.OrderUID, order.Data)
+	//			if !ok {
+	//				logrus.Fatal("Cannot Import Message")
+	//			} else {
+	//				logrus.Info("Successfully inserted in cache")
+	//			}
+	//		}
+	//
+	//	}, stan.DeliverAllAvailable(), stan.DurableName(config.DurableName))
+	//
+	//	if err != nil {
+	//		logrus.Fatal("Can't subscribe to channel", err)
+	//	}
+	//
+	//	w.Wait()
+	//}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
@@ -128,17 +127,6 @@ func Run() {
 	if err := srv.Stop(); err != nil {
 		logrus.Fatal("Server forced to shut down", err)
 	}
-}
-
-func insertMsg(data []byte, c *cache.Cache, timer time.Duration) error {
-	o := NewOrder()
-	err := json.Unmarshal(data, o)
-	if err != nil {
-		return err
-	}
-	c.Set(o.OrderUID, o, timer*time.Minute)
-	fmt.Printf("Order with id: %s inserted correctly\n", o.OrderUID)
-	return nil
 }
 
 func Unmarshaler(input []byte) (*Order, error) {
@@ -151,6 +139,12 @@ func Unmarshaler(input []byte) (*Order, error) {
 }
 
 type Order struct {
+	ID       string          `json:"id"`
+	OrderUID string          `json:"order_uid" faker:"len=20"`
+	Data     json.RawMessage `json:"data"`
+}
+
+type BigOrder struct {
 	OrderUID          string   `json:"order_uid" faker:"len=20"`
 	TrackNumber       string   `json:"track_number" faker:"len=20"`
 	Entry             string   `json:"entry" faker:"oneof: WBIL"`
@@ -206,19 +200,8 @@ type Item struct {
 
 func NewOrder() *Order {
 	return &Order{
-		OrderUID:          "",
-		TrackNumber:       "",
-		Entry:             "",
-		Delivery:          Delivery{},
-		Payment:           Payment{},
-		Items:             nil,
-		Locale:            "",
-		InternalSignature: "",
-		CustomerID:        "",
-		DeliveryService:   "",
-		Shardkey:          "",
-		SmID:              0,
-		DateCreated:       "",
-		OofShard:          "",
+		OrderUID: "",
+		Data:     nil,
+		ID:       "",
 	}
 }

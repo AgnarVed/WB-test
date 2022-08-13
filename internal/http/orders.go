@@ -7,18 +7,17 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
-	"strconv"
 	"wbTest/internal/models"
 )
 
 func (h *Handler) getOrderByID(ctx *fiber.Ctx) error {
 	orderIdStr := ctx.Params("orderID")
-	orderId, err := strconv.ParseInt(orderIdStr, 10, 64)
-	if err != nil {
-		return h.Response(ctx, http.StatusBadRequest, nil, err)
-	}
+	//orderId, err := strconv.ParseInt(orderIdStr, 10, 64)
+	//if err != nil {
+	//	return h.Response(ctx, http.StatusBadRequest, nil, err)
+	//}
 
-	order, err := h.services.Order.GetOrderByID(ctx.UserContext(), int(orderId))
+	order, err := h.services.Order.GetOrderByID(ctx.UserContext(), orderIdStr)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return h.Response(ctx, http.StatusOK, nil, errors.New("order not found"))

@@ -38,6 +38,7 @@ func (h *Handler) Init(app *fiber.App) {
 }
 
 func (h *Handler) serviceHealth(ctx *fiber.Ctx) error {
+
 	msg := "pong"
 	return ctx.Status(200).SendString(msg)
 }

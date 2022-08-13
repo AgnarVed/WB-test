@@ -12,7 +12,7 @@ type order struct {
 	orderDB repository.OrderDB
 }
 
-func (od order) GetOrderByID(ctx context.Context, orderID int) (*models.Order, error) {
+func (od order) GetOrderByID(ctx context.Context, orderID string) (*models.Order, error) {
 	tx, err := od.BeginTransaction(ctx)
 	if err != nil {
 		return nil, err
@@ -48,6 +48,19 @@ func (od *order) CreateOrder(ctx context.Context, insert *models.Order) error {
 		return err
 	}
 	return nil
+}
+
+func (od *order) GetOrderList(ctx context.Context) ([]models.Order, error) {
+	tx, err := od.BeginTransaction(ctx)
+	if err != nil {
+		return nil, err
+	}
+	orders, err := od.orderDB.GetOrderList(ctx, tx)
+
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
 }
 
 func NewOrderService(repos *repository.Repositories, cfg *config.Config) Order {

@@ -15,6 +15,7 @@ type Config struct {
 	CacheExpTime         string `mapstructure:"CACHE_KEY_EXPIRATION_TIME" required:"true"`
 	CacheCleanupInterval string `mapstructure:"CACHE_CLEANUP_INTERVAL" required:"true"`
 	DurableName          string `mapstructure:"DURABLE_NAME" required:"true"`
+	ShutdownTimeout      int    `mapstructure:"SHUTDOWN_TIMEOUT" required:"true"`
 }
 
 //func getTime(input string) (time.Duration, error) {
