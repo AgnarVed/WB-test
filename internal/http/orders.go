@@ -55,7 +55,7 @@ func (h *Handler) showData(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) createOrder(ctx *fiber.Ctx) error {
-	var order models.Order
+	var order models.OrderInput
 	err := ctx.BodyParser(&order)
 	if err != nil {
 		h.Response(ctx, http.StatusBadRequest, nil, err)

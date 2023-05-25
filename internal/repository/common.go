@@ -22,7 +22,7 @@ func (c *commonDBRepo) Get() *sql.DB {
 }
 
 func (c *commonDBRepo) BeginTransaction(ctx context.Context) (*sql.Tx, error) {
-	client, err := c.GetClient()
+	cl, err := c.GetClient()
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func (c *commonDBRepo) BeginTransaction(ctx context.Context) (*sql.Tx, error) {
 		Isolation: sql.LevelDefault,
 	}
 
-	tx, err := client.BeginTx(ctx, &opts)
+	tx, err := cl.BeginTx(ctx, &opts)
 	if err != nil {
 		return nil, err
 	}

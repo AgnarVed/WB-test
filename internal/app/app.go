@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
 	_ "github.com/jackc/pgx/v4"
@@ -11,7 +10,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 	"wbTest/internal/config"
 	"wbTest/internal/http"
 	"wbTest/internal/repository"
@@ -21,8 +19,7 @@ import (
 )
 
 func Run() {
-	logger := logrus.New()
-	config, err := config.NewConfig()
+	cfg, err := config.NewConfig()
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -35,7 +32,7 @@ func Run() {
 	logrus.SetOutput(io.MultiWriter(writers...))
 
 	// init psql database
-	db, err := sql.Open(config.DriverName, config.DBConnStr)
+	db, err := sql.Open(cfg.DriverName, cfg.DBConnStr)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -54,27 +51,12 @@ func Run() {
 	// init cache
 	//cache, err := repository.NewCache(1024, repos.OrderDB, logger)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(config.ShutdownTimeout)*time.Second)
-	defer cancel()
 	// init services
-	services := service.NewService(repos, config)
+	services := service.NewService(repos, cfg)
 
-	cache, err := services.Cache.NewCache(1024, repos.OrderDB, logger)
-	// uploading cache
-	ok, err := services.Cache.UploadCache(ctx)
-	if err != nil {
-		logrus.Fatal("Cannot upload cache ", err)
-	}
-	if ok {
-		logrus.Info("Cache uploaded successfully")
-	}
-	ok = cache.Set("123", nil)
-	if !ok {
-		logger.Fatal("cannot set into cache")
-	}
 	// init server, router, handlers
-	srv := server.NewServer(config)
-	http.NewHandlers(config, services).Init(srv.App())
+	srv := server.NewServer(cfg)
+	http.NewHandlers(cfg, services).Init(srv.App())
 	// start server
 	go func() {
 		err := srv.Run()
@@ -82,44 +64,6 @@ func Run() {
 			logrus.Fatal(err)
 		}
 	}()
-
-	//nats streaming listen
-	//go func() {
-	//	w := sync.WaitGroup{}
-	//	w.Add(1)
-	//	sc, err := stan.Connect(config.ClusterName, config.NatsClient, stan.NatsURL(config.NatsURL))
-	//	if err != nil {
-	//		logrus.Fatal(err)
-	//	}
-	//	defer sc.Close()
-	//	_, err = sc.Subscribe(config.NatsSubject, func(msg *stan.Msg) {
-	//		// TODO insert msg into cache
-	//		order, err := Unmarshaler(msg.Data)
-	//		if err != nil {
-	//			logrus.Fatal("\nUnable to unmarshal message")
-	//		}
-	//		orderCached, ok := cache.Peek(order.OrderUID)
-	//		if ok {
-	//			fmt.Printf("\nOrder by id: %s is %s", order.OrderUID, orderCached.Data)
-	//		} else {
-	//			fmt.Printf("\nCannot find order in cache by ID: %s", order.OrderUID)
-	//			logrus.Info("Inserting into cache")
-	//			ok := cache.Set(order.OrderUID, order.Data)
-	//			if !ok {
-	//				logrus.Fatal("Cannot Import Message")
-	//			} else {
-	//				logrus.Info("Successfully inserted in cache")
-	//			}
-	//		}
-	//
-	//	}, stan.DeliverAllAvailable(), stan.DurableName(config.DurableName))
-	//
-	//	if err != nil {
-	//		logrus.Fatal("Can't subscribe to channel", err)
-	//	}
-	//
-	//	w.Wait()
-	//}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)

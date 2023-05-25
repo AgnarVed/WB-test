@@ -13,7 +13,7 @@ type order struct {
 }
 
 func (od *order) GetOrderByID(ctx context.Context, tx *sql.Tx, orderID string) (*models.Order, error) {
-	query := `SELECT id, order_uid, data
+	query := `SELECT id, order_uid, order_info
 	FROM orders
 	WHERE id=$1;`
 
@@ -30,16 +30,6 @@ func (od *order) GetOrderByID(ctx context.Context, tx *sql.Tx, orderID string) (
 	}
 	return &order, nil
 }
-
-//func (od *order) CreateOrder(ctx context.Context, tx *sql.Tx, insert *models.Order) error {
-//	query := `INSERT INTO orders VALUES ($1,$2,$3)`
-//	_, err := tx.ExecContext(ctx, query, insert.ID, insert.OrderUID, insert.Data)
-//	if err != nil {
-//		return err
-//	}
-//
-//	return nil
-//}
 
 type Msg struct {
 	Message string `json:"msg"`
@@ -78,15 +68,15 @@ func (od *order) GetOrderList(ctx context.Context, tx *sql.Tx) ([]models.Order, 
 	return orderList, nil
 }
 
-func (od *order) CreateOrder(ctx context.Context, tx *sql.Tx, insert *models.Order) error {
-	query := `INSERT INTO orders VALUES ($1,$2,$3)`
+func (od *order) CreateOrder(ctx context.Context, tx *sql.Tx, insert *models.OrderInput) error {
+	query := `INSERT INTO orders (order_uid, order_info) VALUES ($1,$2)`
 	var msg Msg
-	err := json.Unmarshal(insert.Data, &msg)
+	err := json.Unmarshal(insert.OrderInfo, &msg)
 	if err != nil {
 		logrus.Fatal("Cannot Unmarshal Data", err)
 	}
 	dataJson, err := json.Marshal(msg)
-	_, err = tx.ExecContext(ctx, query, insert.ID, insert.OrderUID, dataJson)
+	_, err = tx.ExecContext(ctx, query, insert.OrderUID, dataJson)
 	if err != nil {
 		return err
 	}

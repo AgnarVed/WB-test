@@ -1,0 +1,64 @@
+2023/04/27 13:32:52 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:32:53 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:32:54 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:32:57 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:32:58 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:33:00 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:33:04 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:33:11 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:33:24 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:33:50 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:34:42 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:35:43 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:36:43 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:37:44 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:38:44 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/04/27 13:39:15 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:39:16 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:39:16 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:39:17 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:39:18 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:39:21 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:39:24 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:39:31 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:44:41 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:44:42 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:44:42 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:44:44 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:44:45 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/27 13:44:47 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/28 08:46:55 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:46:57 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:46:58 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:47:00 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:47:01 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:47:04 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:47:09 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:47:15 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:47:29 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:47:55 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:48:47 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:49:47 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:50:48 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:51:48 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 08:52:49 [emerg] 1#1: unexpected "}" in /etc/nginx/nginx.conf:41
+2023/04/28 09:10:44 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/28 09:10:45 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/28 09:10:47 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/28 09:10:48 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/28 09:10:50 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/28 09:10:52 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/28 09:10:56 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/04/28 09:11:04 [emerg] 1#1: host not found in upstream "strapi_container" in /etc/nginx/nginx.conf:12
+2023/05/03 13:00:21 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/05/03 13:00:22 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/05/03 13:00:23 [emerg] 1#1: host not found in upstream "pgadmin_container" in /etc/nginx/nginx.conf:18
+2023/05/25 08:59:04 [emerg] 1#1: host not found in upstream "order-server" in /etc/nginx/nginx.conf:17
+2023/05/25 08:59:06 [emerg] 1#1: host not found in upstream "order-server" in /etc/nginx/nginx.conf:17
+2023/05/25 08:59:06 [emerg] 1#1: host not found in upstream "order-server" in /etc/nginx/nginx.conf:17
+2023/05/25 08:59:07 [emerg] 1#1: host not found in upstream "order-server" in /etc/nginx/nginx.conf:17
+2023/05/25 08:59:09 [emerg] 1#1: host not found in upstream "order-server" in /etc/nginx/nginx.conf:17
+2023/05/25 08:59:11 [emerg] 1#1: host not found in upstream "order-server" in /etc/nginx/nginx.conf:17
+2023/05/25 08:59:15 [emerg] 1#1: host not found in upstream "order-server" in /etc/nginx/nginx.conf:17
+2023/05/25 08:59:24 [emerg] 1#1: host not found in upstream "order-server" in /etc/nginx/nginx.conf:17
+2023/05/25 09:01:27 [emerg] 1#1: host not found in upstream "order-server" in /etc/nginx/nginx.conf:17

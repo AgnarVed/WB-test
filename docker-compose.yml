@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+
+  nginxserv:
+    container_name: nginx
+    build: ./nginx
+    volumes:
+      - ./nginx/logs/nginx:/var/log/nginx_test
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - localnet
+
+  postgres:
+    container_name: postgresDB
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      PGDATA: "/var/lib/postgresql/data/pgdata_test"
+    volumes:
+      - .:/var/lib/postgresql/data_test 777
+      - ./sqls:/docker-entrypoint-initdb.d
+    ports:
+      - "6060:5432"
+    restart: unless-stopped
+    networks:
+      - localnet
+
+  pgAdmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@test.test"
+      PGADMIN_DEFAULT_PASSWORD: "PGAdminPassword"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin_test
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - localnet
+
+  server:
+    container_name: order-server
+    build: .
+    environment:
+      DB_HOST: "postgresDB"
+      DB_PORT: "5432"
+      DB_NAME: "order_test"
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "postgres"
+
+    ports:
+      - "8080:8080"
+
+    restart: unless-stopped
+
+    depends_on:
+      - postgres
+    networks:
+      - localnet
+
+networks:
+  localnet:
+    driver: bridge

@@ -5,17 +5,10 @@ import (
 )
 
 type Config struct {
-	Port                 int    `mapstructure:"SERVER_PORT" required:"true"`
-	DBConnStr            string `mapstructure:"DB_CONN_STR" required:"true"`
-	DriverName           string `mapstructure:"DB_DRIVER_NAME" required:"true"`
-	ClusterName          string `mapstructure:"NATS_CLUSTER_NAME" required:"true"`
-	NatsURL              string `mapstructure:"NATS_URL" required:"true"`
-	NatsClient           string `mapstructure:"NATS_CLIENT" required:"true"`
-	NatsSubject          string `mapstructure:"NATS_SUBJECT" required:"true"`
-	CacheExpTime         string `mapstructure:"CACHE_KEY_EXPIRATION_TIME" required:"true"`
-	CacheCleanupInterval string `mapstructure:"CACHE_CLEANUP_INTERVAL" required:"true"`
-	DurableName          string `mapstructure:"DURABLE_NAME" required:"true"`
-	ShutdownTimeout      int    `mapstructure:"SHUTDOWN_TIMEOUT" required:"true"`
+	Port            int    `mapstructure:"SERVER_PORT" required:"true"`
+	DBConnStr       string `mapstructure:"DB_CONN_STR" required:"true"`
+	DriverName      string `mapstructure:"DB_DRIVER_NAME" required:"true"`
+	ShutdownTimeout int    `mapstructure:"SHUTDOWN_TIMEOUT" required:"true"`
 }
 
 //func getTime(input string) (time.Duration, error) {

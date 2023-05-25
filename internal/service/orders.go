@@ -31,7 +31,7 @@ func (od order) GetOrderByID(ctx context.Context, orderID string) (*models.Order
 	return order, nil
 }
 
-func (od *order) CreateOrder(ctx context.Context, insert *models.Order) error {
+func (od *order) CreateOrder(ctx context.Context, insert *models.OrderInput) error {
 	tx, err := od.BeginTransaction(ctx)
 	if err != nil {
 		return err

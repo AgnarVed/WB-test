@@ -29,11 +29,11 @@ func (h *Handler) Init(app *fiber.App) {
 	}))
 
 	app.Get("/ping", h.serviceHealth)
-	app.Get("/:orderID", h.getOrderByID)
-	app.Post("/order/create", h.createOrder)
-	//v1 := app.Group("/")
-	//
-	//h.initRoutesItem(v1)
+
+	app.Route("/order", func(router fiber.Router) {
+		router.Get("/:orderID", h.getOrderByID)
+		router.Post("/create", h.createOrder)
+	})
 
 }
 
